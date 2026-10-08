@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>摸鱼小助手 · 设置</title>
+    <link rel="stylesheet" href="/src/settings/settings.css" />
+  </head>
+  <body>
+    <main class="wrap">
+      <h1>摸鱼小助手 <span class="sub">托盘常驻 · 全局老板键 · 任意界面一键伪装</span></h1>
+
+      <section class="card">
+        <h2>老板键</h2>
+        <div class="row">
+          <button id="hotkey-btn" class="hotkey" type="button">F9</button>
+          <span id="hotkey-hint" class="hint">点击左侧按键后，在键盘上按下新的快捷键组合（Esc 取消）。设置后在任何界面按下老板键即可切换伪装。</span>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>伪装界面</h2>
+        <div class="skins" id="skin-list"></div>
+      </section>
+
+      <section class="card">
+        <h2>行为</h2>
+        <label class="check"><input type="checkbox" id="opt-autostart" /> 开机自动启动（登录后常驻托盘）</label>
+        <label class="check"><input type="checkbox" id="opt-trayleft" /> 鼠标左键点击托盘图标 = 立即伪装 / 恢复</label>
+      </section>
+
+      <footer class="actions">
+        <button id="btn-try" class="ghost" type="button">立即试一下</button>
+        <span class="spacer"></span>
+        <button id="btn-quit" class="ghost danger" type="button">退出应用</button>
+        <button id="btn-save" class="primary" type="button">保存设置</button>
+      </footer>
+      <div id="toast" class="toast" hidden></div>
+    </main>
+    <script type="module" src="/src/settings/main.ts"></script>
+  </body>
+</html>

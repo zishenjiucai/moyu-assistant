@@ -1,0 +1,7 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "设置页与遮罩页的事件监听能力；自定义命令无需额外授权",
+  "windows": ["settings", "cover-*"],
+  "permissions": ["core:default"]
+}

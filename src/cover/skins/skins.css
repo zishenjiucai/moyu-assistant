@@ -1,0 +1,837 @@
+/* 伪装皮肤样式 v2。移植并强化自 game 项目 BossKey.tsx 的设计。
+   关键约束：遮罩必须零动画瞬间出现，任何元素不得有 transition/animation。
+   通用组件：.rb-* 功能区、.dd 下拉、.bi 字体按钮、.qat/.winbtns 标题栏部件。 */
+
+*,
+*::before,
+*::after {
+  transition: none !important;
+  animation: none !important;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  cursor: default;
+}
+
+#root {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+}
+
+.mk-sheet,
+.mk-code,
+.mk-doc {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  user-select: none;
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+/* 视口若被安全区压缩，只允许内容区收缩，顶栏/状态栏等伪装元素不得变形 */
+.mk-sheet > *,
+.mk-code > *,
+.mk-doc > * {
+  flex-shrink: 0;
+}
+.mk-sheet > .xl-body,
+.mk-code > .vs-main,
+.mk-doc > .wd-body {
+  flex-shrink: 1;
+  min-height: 0;
+}
+
+/* mac：真实菜单栏悬浮于遮罩上层，顶部留出菜单栏高度并以标题栏同色铺垫，
+   视觉上相当于标题栏延伸进菜单栏区域；Windows 无菜单栏，满屏覆盖 */
+:root[data-platform="mac"] .mk-sheet {
+  padding-top: 25px;
+  background: linear-gradient(#217346 25px, #f3f3f3 25px);
+}
+:root[data-platform="mac"] .mk-code {
+  padding-top: 25px;
+  background: linear-gradient(#323233 25px, #1e1e1e 25px);
+}
+:root[data-platform="mac"] .mk-doc {
+  padding-top: 25px;
+  background: linear-gradient(#2b579a 25px, #f5f5f5 25px);
+}
+
+/* =====================================================
+ * 标题栏公共部件（快速访问 + 窗口按钮）
+ * ===================================================== */
+
+.qat {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  opacity: 0.95;
+}
+.qat .undo { font-size: 12px; color: #fff; }
+
+.winbtns {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: auto;
+}
+.winbtns .wc {
+  color: #fff;
+  font-size: 12px;
+  padding: 2px 10px;
+}
+.winbtns .dot { width: 12px; height: 12px; border-radius: 999px; }
+.winbtns .dot.red { background: #ff5f57; }
+.winbtns .dot.yellow { background: #febc2e; }
+.winbtns .dot.green { background: #28c840; }
+
+/* =====================================================
+ * 功能区（Ribbon）公共部件
+ * ===================================================== */
+
+.rb-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2px 10px 0;
+  border-right: 1px solid #e3e3e3;
+  position: relative;
+  height: 100%;
+}
+.rb-group:last-child { border-right: none; }
+.rb-label {
+  font-style: normal;
+  font-size: 10px;
+  color: #8a8a8a;
+  align-self: flex-end;
+  margin-top: auto;
+}
+.rb-big {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  background: none;
+  border: none;
+  padding: 4px 8px 0;
+  font: inherit;
+  color: #444;
+}
+.rb-big b { font-size: 11px; font-weight: 400; }
+.rb-col { display: flex; flex-direction: column; gap: 3px; }
+.rb-col2 { display: flex; flex-direction: column; gap: 4px; }
+.rb-row { display: flex; align-items: center; gap: 4px; }
+.rb-mini { font-size: 11px; color: #444; white-space: nowrap; }
+
+.dd {
+  border: 1px solid #d4d4d4;
+  background: #fff;
+  font-size: 11px;
+  color: #333;
+  padding: 2px 6px;
+  white-space: nowrap;
+}
+.dd.wide { min-width: 96px; }
+.bi {
+  font-size: 13px;
+  font-style: normal;
+  color: #444;
+  min-width: 18px;
+  text-align: center;
+}
+.bi.it { font-family: Georgia, serif; }
+.bi.ab { color: #c0392b; }
+
+/* =====================================================
+ * Excel 皮肤
+ * ===================================================== */
+
+.mk-sheet {
+  display: flex;
+  flex-direction: column;
+  background: #f3f3f3;
+  color: #1f2328;
+  font-family: "Segoe UI", Calibri, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-size: 12px;
+}
+
+.xl-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 30px;
+  background: #217346;
+  color: #fff;
+  padding: 0 6px 0 10px;
+  flex-shrink: 0;
+}
+.xl-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+}
+.xl-search {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 300px;
+  height: 20px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 11px;
+  padding: 0 10px;
+}
+.xl-search i { font-style: normal; }
+.xl-account {
+  margin-left: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.85);
+  color: #217346;
+  font-size: 10px;
+  font-weight: 700;
+}
+.xl-titlebar .winbtns { margin-left: 8px; }
+
+.xl-tabs {
+  display: flex;
+  align-items: stretch;
+  gap: 2px;
+  background: #f3f3f3;
+  padding: 0 4px;
+  color: #444;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+.xl-tabs span { padding: 5px 11px; position: relative; }
+.xl-tabs span.active {
+  color: #217346;
+  font-weight: 600;
+}
+.xl-tabs span.active::after {
+  content: "";
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: 0;
+  height: 2px;
+  background: #217346;
+}
+.xl-tabs .file { color: #217346; }
+.xl-tabs .tell-me {
+  margin-left: auto;
+  color: #999;
+  font-size: 11px;
+  align-self: center;
+}
+
+.xl-ribbon {
+  display: flex;
+  align-items: stretch;
+  height: 88px;
+  background: #f9f9f9;
+  border-bottom: 1px solid #d9dcdf;
+  padding: 2px 4px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.xl-formula {
+  display: flex;
+  align-items: stretch;
+  height: 26px;
+  border-bottom: 1px solid #d9dcdf;
+  background: #fff;
+  font-size: 11px;
+  flex-shrink: 0;
+}
+.xl-formula .cell-ref {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 78px;
+  border: 1px solid #c8c8c8;
+  margin: 3px 4px;
+  padding: 0 6px;
+  font-weight: 600;
+}
+.xl-formula .cell-ref i { font-style: normal; color: #888; font-size: 9px; }
+.xl-formula .fx {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 8px;
+  color: #444;
+}
+.xl-formula .fx i {
+  font-family: Georgia, serif;
+  font-style: italic;
+  color: #217346;
+}
+.xl-formula .fx b { color: #217346; font-weight: 400; }
+.xl-formula .expr { flex: 1; padding: 5px 8px 0; font-size: 12px; }
+
+.xl-body {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  background: #fff;
+  position: relative;
+}
+.xl-body table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 12px;
+  font-family: Calibri, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+.xl-body th,
+.xl-body td {
+  border: 1px solid #e0e0e0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.xl-body thead tr {
+  background: #f5f5f5;
+  color: #616161;
+  font-size: 11px;
+  font-weight: 400;
+}
+.xl-body thead th {
+  height: 20px;
+  text-align: center;
+  border-right: 1px solid #cfcfcf;
+  border-bottom: 1px solid #a6a6a6;
+}
+.xl-body th.idx { width: 34px; }
+.xl-body th.colh.hl {
+  background: #d9ebdf;
+  color: #217346;
+  border-bottom: 2px solid #217346;
+}
+.xl-body td.idx,
+.xl-body tr.fields td.idx {
+  background: #f5f5f5;
+  text-align: center;
+  font-size: 11px;
+  color: #616161;
+}
+.xl-body td.idx.hl-row {
+  background: #d9ebdf;
+  color: #217346;
+  border-right: 2px solid #217346;
+}
+.xl-body tr.fields td {
+  background: #e9f1ec;
+  color: #1e5c38;
+  font-weight: 600;
+  text-align: center;
+}
+.xl-body tr.fields td.idx { background: #f5f5f5; color: #616161; font-weight: 400; }
+.xl-body tr.odd td { background: #fbfbfb; }
+
+.xl-body td.td {
+  padding: 0 6px;
+  height: 21px;
+  line-height: 21px;
+}
+.td { white-space: nowrap; }
+.right { text-align: right; }
+.bold { font-weight: 600; }
+.st-paid { color: #107c41; }
+.st-due { color: #b45309; }
+.st-ship { color: #1d4ed8; }
+.st-invoiced { color: #6d28d9; }
+.grand { color: #107c41; }
+
+/* 选中单元格：绿色粗边框 + 右下角填充柄 */
+.xl-body td.sel {
+  position: relative;
+  outline: 2px solid #217346;
+  outline-offset: -2px;
+  background: #fff;
+}
+.xl-body td.sel::after {
+  content: "";
+  position: absolute;
+  right: -3px;
+  bottom: -3px;
+  width: 5px;
+  height: 5px;
+  background: #217346;
+  border: 1px solid #fff;
+  z-index: 5;
+}
+
+.xl-body tr.total { background: #f7f9f8; font-weight: 600; }
+.xl-body tr.total td.idx { background: #f5f5f5; color: #616161; font-weight: 400; }
+
+.xl-sheets {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  border-top: 1px solid #d9dcdf;
+  background: #f3f3f3;
+  padding: 3px 8px;
+  font-size: 11px;
+  flex-shrink: 0;
+}
+.xl-sheets .nav { color: #888; font-size: 10px; padding-right: 6px; }
+.xl-sheets span { padding: 2px 12px; color: #555; }
+.xl-sheets span.active {
+  color: #217346;
+  font-weight: 600;
+  border-bottom: 2px solid #217346;
+}
+.xl-sheets .plus { color: #888; }
+
+.xl-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 24px;
+  background: #217346;
+  color: rgba(255, 255, 255, 0.92);
+  padding: 0 12px;
+  font-size: 11px;
+  flex-shrink: 0;
+}
+.xl-status .views {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+}
+.xl-status .views b { font-weight: 400; }
+
+/* =====================================================
+ * VSCode 皮肤
+ * ===================================================== */
+
+.mk-code {
+  display: flex;
+  flex-direction: column;
+  background: #1e1e1e;
+  color: #d4d4d4;
+  font-family: "SF Mono", ui-monospace, Menlo, Consolas, "PingFang SC", monospace;
+  font-size: 12px;
+}
+
+.vs-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 36px;
+  background: #323233;
+  padding: 0 12px;
+  flex-shrink: 0;
+}
+.vs-titlebar .traffic { display: flex; gap: 8px; }
+.vs-titlebar .dot { width: 12px; height: 12px; border-radius: 999px; }
+.vs-titlebar .dot.red { background: #ff5f57; }
+.vs-titlebar .dot.yellow { background: #febc2e; }
+.vs-titlebar .dot.green { background: #28c840; }
+.vs-titlebar .wc { color: #cccccc; font-size: 12px; padding: 2px 10px; }
+.vs-titlebar .vs-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #cccccc;
+  font-size: 12px;
+}
+
+.vs-main {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.vs-activity {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 48px;
+  background: #333333;
+  padding: 8px 0;
+  flex-shrink: 0;
+}
+.vs-activity .act {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+}
+.vs-activity .act.active { border-left: 2px solid #fff; }
+.vs-activity .act-gap { margin-top: auto; }
+
+.vs-sidebar {
+  width: 208px;
+  overflow: hidden;
+  background: #252526;
+  padding: 4px 0;
+  color: #cccccc;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+.vs-side-head {
+  margin: 0;
+  padding: 4px 16px;
+  font-size: 10.5px;
+  letter-spacing: 0.3px;
+  color: #bbbbbb;
+}
+.vs-sidebar .file {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px 3px 0;
+}
+.vs-sidebar .file.active { background: #37373d; color: #fff; }
+.vs-sidebar .chev { font-size: 9px; }
+.vs-sidebar .fname { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.vs-editor {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+.vs-codewrap {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+.vs-tabs {
+  display: flex;
+  align-items: stretch;
+  background: #252526;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+.vs-tabs .tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  color: #969696;
+}
+.vs-tabs .tab.active {
+  border-top: 2px solid #0e639c;
+  background: #1e1e1e;
+  color: #fff;
+}
+.vs-tabs .tab em { font-style: normal; color: #cccccc; }
+
+.vs-crumbs {
+  background: #1e1e1e;
+  padding: 4px 16px;
+  font-size: 10.5px;
+  color: #6e7681;
+  flex-shrink: 0;
+}
+
+.vs-code {
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+  overflow: auto;
+  background: #1e1e1e;
+  padding: 6px 0;
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+.vs-code .line { display: flex; }
+.vs-code .ln {
+  width: 44px;
+  flex-shrink: 0;
+  padding-right: 12px;
+  text-align: right;
+  color: #6e7681;
+  user-select: none;
+}
+.vs-code .code { white-space: pre; padding-right: 24px; }
+
+.tk-com { color: #6a9955; }
+.tk-str { color: #ce9178; }
+.tk-kw { color: #569cd6; }
+.tk-ctl { color: #c586c0; }
+.tk-num { color: #b5cea8; }
+.tk-type { color: #4ec9b0; }
+.tk-fn { color: #dcdcaa; }
+
+.vs-minimap {
+  position: relative;
+  width: 62px;
+  background: #1e1e1e;
+  padding: 6px 4px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.vs-minimap i {
+  display: block;
+  height: 2px;
+  margin-bottom: 3px;
+  background: #6e7681;
+  opacity: 0.45;
+  border-radius: 1px;
+}
+.vs-minimap .viewport {
+  position: absolute;
+  top: 6px;
+  left: 0;
+  right: 0;
+  height: 62%;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.vs-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 24px;
+  background: #007acc;
+  color: #fff;
+  padding: 0 12px;
+  font-size: 11px;
+  flex-shrink: 0;
+}
+
+/* =====================================================
+ * Word 皮肤
+ * ===================================================== */
+
+.mk-doc {
+  display: flex;
+  flex-direction: column;
+  background: #f5f5f5;
+  color: #374151;
+  font-family: "等线", DengXian, "Segoe UI", -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+.wd-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 32px;
+  background: #2b579a;
+  color: #fff;
+  padding: 0 6px 0 10px;
+  flex-shrink: 0;
+}
+.wd-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+}
+.wd-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+}
+.wd-search {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 280px;
+  height: 20px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 11px;
+  padding: 0 10px;
+}
+.wd-search i { font-style: normal; }
+.wd-account {
+  margin-left: 10px;
+  font-size: 11px;
+  opacity: 0.92;
+  padding-right: 4px;
+}
+.wd-titlebar .winbtns { margin-left: 8px; }
+
+.wd-tabs {
+  display: flex;
+  align-items: stretch;
+  gap: 2px;
+  background: #2b579a;
+  color: #fff;
+  font-size: 12px;
+  flex-shrink: 0;
+  padding: 0 4px;
+}
+.wd-tabs span { padding: 6px 12px; position: relative; }
+.wd-tabs span.active {
+  background: #f5f5f5;
+  color: #2b579a;
+  font-weight: 600;
+}
+.wd-tabs .file { color: #fff; background: rgba(255, 255, 255, 0.14); }
+.wd-tabs .tell-me { margin-left: auto; align-self: center; font-size: 11px; opacity: 0.85; }
+
+.wd-ribbon {
+  display: flex;
+  align-items: stretch;
+  height: 92px;
+  background: #f9f9f9;
+  border-bottom: 1px solid #d9dcdf;
+  padding: 2px 4px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.rb-styles {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.style-box {
+  width: 76px;
+  height: 62px;
+  border: 1px solid #c9d4e4;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 3px;
+  color: #333;
+  overflow: hidden;
+}
+.style-box u {
+  text-decoration: none;
+  font-size: 10px;
+  color: #444;
+}
+.style-box.on {
+  border: 2px solid #2b579a;
+  background: #eef3fa;
+}
+.style-box.style-h1 b { font-size: 17px; font-weight: 700; color: #2f5496; }
+.style-box.style-h2 b { font-size: 14px; font-weight: 700; color: #2f5496; }
+.style-box.style-body b { font-size: 12px; font-weight: 400; color: #333; }
+.style-box.style-plain b { font-size: 11.5px; font-weight: 400; color: #333; letter-spacing: -0.3px; }
+
+.wd-ruler {
+  position: relative;
+  height: 20px;
+  background: #f3f3f3;
+  border-bottom: 1px solid #e0e0e0;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.wd-ruler i {
+  position: absolute;
+  top: 0;
+  width: 1px;
+  height: 5px;
+  background: #9a9a9a;
+}
+.wd-ruler i.big { height: 9px; }
+.wd-ruler i b {
+  position: absolute;
+  top: 8px;
+  left: -4px;
+  font-weight: 400;
+  font-size: 9px;
+  color: #8a8a8a;
+}
+
+.wd-body {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  background: #d8d8d8;
+  padding: 24px 16px;
+}
+.wd-paper {
+  width: 794px;
+  min-height: 100%;
+  margin: 0 auto 24px;
+  background: #fff;
+  padding: 90px 96px 70px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.22);
+}
+.wd-paper h1 {
+  margin: 0;
+  text-align: center;
+  font-size: 21px;
+  letter-spacing: 0.5px;
+  color: #111827;
+}
+.wd-sub {
+  margin: 10px 0 0;
+  text-align: center;
+  font-size: 11px;
+  color: #9ca3af;
+}
+.wd-paper hr { margin: 22px 0; border: none; border-top: 1px solid #e5e7eb; }
+.wd-sec { margin-bottom: 20px; }
+.wd-sec h2 {
+  margin: 0 0 9px;
+  font-size: 15px;
+  color: #111827;
+}
+.wd-sec ol {
+  margin: 0;
+  padding-left: 24px;
+  font-size: 12.5px;
+  line-height: 1.75;
+  color: #1f2937;
+}
+.wd-sec ol li { margin-bottom: 5px; }
+.wd-sec p { margin: 0; font-size: 12.5px; line-height: 1.75; color: #1f2937; }
+.wd-sign {
+  margin-top: 34px;
+  text-align: right;
+  font-size: 12px;
+  color: #6b7280;
+}
+.wd-sign p { margin: 4px 0; }
+
+.wd-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 26px;
+  background: #2b579a;
+  color: #fff;
+  padding: 0 12px;
+  font-size: 11px;
+  flex-shrink: 0;
+}
+.wd-status .views {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.wd-status .views b { font-weight: 400; }
