@@ -51,8 +51,8 @@ impl SavedFocus {
         if self.hwnd == 0 {
             return;
         }
-        let hwnd = HWND(self.hwnd);
-        if unsafe { IsWindow(hwnd) }.as_bool() {
+        let hwnd = HWND(self.hwnd as *mut core::ffi::c_void);
+        if unsafe { IsWindow(Some(hwnd)) }.as_bool() {
             unsafe {
                 let _ = SetForegroundWindow(hwnd);
             }
